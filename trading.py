@@ -3,6 +3,7 @@ import pandas as pd
 import csv
 import time
 import datetime
+from scipy.stats.mstats import gmean
 
 def readxls():
     df1=pd.read_excel("C:/Users/Pawan/IdeaProjects/GBCETrading/GBCEdata.xlsx")
@@ -25,8 +26,8 @@ def calc(t,p):
     else:
         print("INFO: P/E Ratio is " + str(peratio))
 
-def vws(dict_mem,ticker):
-    vws_time=time.time()
+def vws(dict_mem,ticker,vws_time):
+
     numrator=0
     denominator=0
     numrator_arr=[]
@@ -37,6 +38,16 @@ def vws(dict_mem,ticker):
     numrator=sum(numrator_arr)
     vwsp=numrator/denominator
     return vwsp
+
+def gbce(dict_mem,gbce_time):
+    cell=readxls()
+    tickers=cell.iloc[:,0]
+    p_arr=[]
+    for i in tickers:
+        vws_i=vws(dict_mem,i,gbce_time)
+        p_arr.append(vws_i)
+    gbce_val=gmean(p_arr)
+    return gbce_val
 
 def trade(trade_type,price,ticker,dict_mem,quantity):
     trade_arr=[]
@@ -73,9 +84,17 @@ if __name__ == '__main__':
         quantity = int(input("INFO: Input the quantity you wish to purchase."))
 
         trade(trade_type,price,ticker,dict_mem,quantity)
-        vws_ans=input("Do you wish to calculate Volume Weighted stock price of " + ticker + " .Answer Y/N" )
+        vws_ans=input("INFO: Do you wish to calculate Volume Weighted stock price of " + ticker + " .Answer Y/N" )
         if vws_ans=="Y":
-            vwsp=vws(dict_mem,ticker)
-            print("INFO: ")
+            vws_time=time.time()
+            vwsp=vws(dict_mem,ticker,vws_time)
+            print("INFO: Volume Weighted Stock Price of " + ticker +" is" + vwsp)
         else:
-            print("WARN: Answer is not appropriate.")
+            print("WARN: Selection is not appropriate.")
+        gbce_ans=input("INFO: Do you wish to calculate GBCE of all share ?")
+        if gbce_ans=="Y":
+            gbce_time=time.time()
+            gbce_v=gbce(dict_mem,gbce_time)
+            print("INFO: GBCE for all stocks is " + gbce_v)
+        else:
+            print("WARN: Selection is not appropriate. ")
