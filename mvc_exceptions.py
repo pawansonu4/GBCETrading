@@ -1,6 +1,6 @@
-class ItemAlreadyStored(Exception):
+class tickerAlreadyStored(Exception):
     pass
 
 
-class ItemNotStored(Exception):
+class tickerNotStored(Exception):
     pass
